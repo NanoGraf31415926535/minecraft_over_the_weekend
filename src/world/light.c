@@ -3,9 +3,9 @@
 #include "chunk.h"
 #include "world.h"
 
-// TODO: there is currently a sunlight bug where sunlight which is propagating
-// down in a column which is not its original column still maintains its value
-// as it goes lower - this is something optional to fix tha probably (?) should
+// TODO: there is currently a sunlight bug where sunlight which is propagating 
+// down in a column which is not its original column still maintains its value 
+// as it goes lower - this is something optional to fix tha probably (?) should 
 // be fixed.
 
 #define QUEUE_SIZE 65536 
@@ -39,7 +39,7 @@ static void add_propagate(
         u32 light = world_get_light(world, node.pos),
             val = (light & mask) >> offset;
 
-        // propagate in reverse of enum Direction order so DOWN is first
+        // propagate in reverse of enum Direction order so DOWN is first 
         // this will improve sunlight propagation speed
         for (enum Direction d = DOWN; (s32) d >= 0; d--) {
             bool sunlight_down = type == SUNLIGHT && d == DOWN; 
@@ -50,11 +50,11 @@ static void add_propagate(
                 n_val = ((n_light & mask) >> offset);
             struct Block n_block = BLOCKS[chunk_data_to_block(n_data)];
 
-            // TODO: it may be incorrect to check n_val != 0 to subvert the block behavior call
+            // TODO: it may be incorrect to check n_val != 0 to subvert the block behavior call 
             if ((n_val != 0 || n_block.transparent) &&
                 ((sunlight_down && n_val < val) || (n_val + 1 < val))) {
 
-                // sunlight does not dim as it is propagated down
+                // sunlight does not dim as it is propagated down 
                 u32 delta = sunlight_down ? 0 : -1;
 
                 world_set_light(
@@ -68,23 +68,23 @@ static void add_propagate(
 }
 
 static void remove_propagate(
-    struct World *world, struct LightQueue *queue, struct LightQueue *prop_queue,
+    struct World *world, struct LightQueue *queue, struct LightQueue *prop_queue, 
     u32 mask, u32 offset, enum PropagationType type) {
     while (queue->size != 0) {
-        struct LightNode node = DEQUEUE(queue);
+        struct LightNode node = DEQUEUE(queue); 
         u32 value = node.value;
 
-        for (enum Direction d = 0; d < 6; d++) {
-            ivec3s n_pos = glms_ivec3_add(node.pos, DIR2IVEC3S(d));
-            u32 n_light = world_get_light(world, n_pos),
+        for (enum Direction d = 0; d < 6; d++) { 
+            ivec3s n_pos = glms_ivec3_add(node.pos, DIR2IVEC3S(d)); 
+            u32 n_light = world_get_light(world, n_pos), 
                 n_value = (n_light & mask) >> offset;
 
             if ((n_light & mask) != 0 &&
                 (n_value < value || (type == SUNLIGHT && d == DOWN))) {
                 world_set_light(world, n_pos, n_light & ~mask);
-                ENQUEUE(queue, ((struct LightNode) { .pos = n_pos, .value = n_value }));
+                ENQUEUE(queue, ((struct LightNode) { .pos = n_pos, .value = n_value })); 
             } else if (n_value >= value) {
-                ENQUEUE(prop_queue, ((struct LightNode) { .pos = n_pos }));
+                ENQUEUE(prop_queue, ((struct LightNode) { .pos = n_pos })); 
             }
         }
     }
@@ -92,11 +92,11 @@ static void remove_propagate(
 
 static void add_channel(
     struct World *world, ivec3s pos,
-    u8 value, u32 mask, u32 offset, enum PropagationType type) {
+    u8 value, u32 mask, u32 offset, enum PropagationType type) { 
     struct LightQueue queue = { .size = 0 };
-    world_set_light(world, pos, (world_get_light(world, pos) & ~mask) | (((u32) value) << offset));
-    ENQUEUE(&queue, ((struct LightNode) { .pos = pos }));
-    add_propagate(world, &queue, mask, offset, type);
+    world_set_light(world, pos, (world_get_light(world, pos) & ~mask) | (((u32) value) << offset)); 
+    ENQUEUE(&queue, ((struct LightNode) { .pos = pos })); 
+    add_propagate(world, &queue, mask, offset, type); 
 }
 
 static void remove_channel(
@@ -121,13 +121,13 @@ void torchlight_add(struct World *world, ivec3s pos, Torchlight light) {
 
     for (size_t i = 0; i < 4; i++) {
         u32 mask = 0xF << (i * 4), offset = i * 4;
-        add_channel(world, pos, (light & mask) >> offset, mask, offset, DEFAULT_LIGHT);
+        add_channel(world, pos, (light & mask) >> offset, mask, offset, DEFAULT_LIGHT); 
     }
 }
 
 void torchlight_remove(struct World *world, ivec3s pos) {
     for (size_t i = 0; i < 4; i++) {
-        remove_channel(world, pos, 0xF << (i * 4), i * 4, DEFAULT_LIGHT);
+        remove_channel(world, pos, 0xF << (i * 4), i * 4, DEFAULT_LIGHT); 
     }
 }
 
