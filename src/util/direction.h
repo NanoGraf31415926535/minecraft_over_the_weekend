@@ -1,31 +1,55 @@
 #ifndef DIRECTION_H
 #define DIRECTION_H
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-braces"
+/**
+ * @file direction.h
+ * @brief Provides an enum and functions for working with 3D directions.
+ */
 
 #include <cglm/cglm.h>
 #include <cglm/struct.h>
 
-#pragma GCC diagnostic pop
+/**
+ * @brief Represents 3D directions.
+ */
+typedef enum {
+    NORTH = 0, ///< North direction.
+    SOUTH = 1, ///< South direction.
+    EAST = 2,  ///< East direction.
+    WEST = 3,  ///< West direction.
+    UP = 4,    ///< Up direction.
+    DOWN = 5   ///< Down direction.
+} Direction;
 
-enum Direction {
-    NORTH = 0,
-    SOUTH = 1,
-    EAST = 2,
-    WEST = 3,
-    UP = 4,
-    DOWN = 5
-};
+extern const ivec3s DIRECTION_IVEC[6]; ///< Array of direction vectors as ivec3s.
+extern const vec3s DIRECTION_VEC[6]; ///< Array of direction vectors as vec3s.
 
-extern const ivec3s DIRECTION_IVEC[6];
-extern const vec3s DIRECTION_VEC[6];
+/**
+ * @brief Converts an ivec3s to a Direction enum value.
+ * @param v The ivec3s to convert.
+ * @return The corresponding Direction enum value, or -1 if invalid.
+ */
+Direction _ivec3s2dir(ivec3s v);
 
-enum Direction _ivec3s2dir(ivec3s v);
-
+/**
+ * @brief Gets the vec3s representation of a direction.
+ * @param d The direction.
+ * @return The vec3s representation.
+ */
 #define DIR2VEC3S(d) (DIRECTION_VEC[d])
+
+/**
+ * @brief Gets the ivec3s representation of a direction.
+ * @param d The direction.
+ * @return The ivec3s representation.
+ */
 #define DIR2IVEC3S(d) (DIRECTION_IVEC[d])
+
+/**
+ * @brief Converts an ivec3s to a Direction enum value.
+ * @param v The ivec3s to convert.
+ * @return The corresponding Direction enum value.
+ */
 #define IVEC3S2DIR(v) (_ivec3s2dir(v))
 
-
-#endif
+#endif // DIRECTION_H
