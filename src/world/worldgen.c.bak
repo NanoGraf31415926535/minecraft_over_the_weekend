@@ -4,10 +4,10 @@
 #include "world.h"
 
 #define RADIAL2I(c, r, v) \
-    (glms_vec2_norm(glms_vec2_sub(IVEC2S2V((c)), IVEC2S2V((v)))) / glms_vec2_norm(IVEC2S2V((r))))
+    (glms_vec2_norm(glms_vec2_sub(IVEC2S2V((c)), IVEC2S2V((v)))) / glms_vec2_norm(IVEC2S2V((r)))) 
 
 #define RADIAL3I(c, r, v) \
-    (glms_vec3_norm(glms_vec3_sub(IVEC3S2V((c)), IVEC3S2V((v)))) / glms_vec3_norm(IVEC3S2V((r))))
+    (glms_vec3_norm(glms_vec3_sub(IVEC3S2V((c)), IVEC3S2V((v)))) / glms_vec3_norm(IVEC3S2V((r)))) 
 
 #define WATER_LEVEL 64
 
@@ -57,7 +57,7 @@ struct Noise octave(s32 n, s32 o) {
 }
 
 f32 combined_compute(struct Combined *p, f32 seed, f32 x, f32 z) {
-    return p->n->compute(&p->n->params, seed, x + p->m->compute(&p->m->params, seed, x, z), z);
+    return p->n->compute(&p->n->params, seed, x + p->m->compute(&p->m->params, seed, x, z), z); 
 }
 
 struct Noise combined(struct Noise *n, struct Noise *m) {
@@ -85,13 +85,13 @@ static void _set(struct Chunk *chunk, s32 x, s32 y, s32 z, u32 d) {
     
     ivec3s p_w = glms_ivec3_add(chunk->position, p);
     if (!world_contains(chunk->world, p_w)) {
-        world_append_unloaded_block(chunk->world, p_w, d);
+        world_append_unloaded_block(chunk->world, p_w, d); 
     } else {
         world_set_block(chunk->world, p_w, d);
     }
 }
 
-void tree(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) {
+void tree(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) { 
     enum BlockId under = get(chunk, x, y - 1, z);
     if (under != GRASS && under != DIRT) {
         return;
@@ -114,19 +114,19 @@ void tree(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) {
                 bool corner = c == 2;
 
                 if ((!(xx == x && zz == z) || yy > (y + h)) &&
-                    !(corner && yy == (y + h + 1) && RANDCHANCE(0.4))) {
+                    !(corner && yy == (y + h + 1) && RANDCHANCE(0.4))) { 
                     set(chunk, xx, yy, zz, LEAVES);
                 }
             }
         }
     }
 
-    for (s32 xx = (x - 1); xx <= (x + 1); xx++) {
-        for (s32 zz = (z - 1); zz <= (z + 1); zz++) {
-            for (s32 yy = (y + h + 2); yy <= (y + h + lh); yy++) {
+    for (s32 xx = (x - 1); xx <= (x + 1); xx++) { 
+        for (s32 zz = (z - 1); zz <= (z + 1); zz++) { 
+            for (s32 yy = (y + h + 2); yy <= (y + h + lh); yy++) { 
                 s32 c = 0;
-                c += xx == (x - 1) || xx == (x + 1);
-                c += zz == (z - 1) || zz == (z + 1);
+                c += xx == (x - 1) || xx == (x + 1); 
+                c += zz == (z - 1) || zz == (z + 1); 
                 bool corner = c == 2;
 
                 if (!(corner && yy == (y + h + lh) && RANDCHANCE(0.8))) {
@@ -137,8 +137,8 @@ void tree(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) {
     }
 }
 
-void flowers(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) {
-    enum BlockId flower = RANDCHANCE(0.6) ? ROSE : BUTTERCUP;
+void flowers(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) { 
+    enum BlockId flower = RANDCHANCE(0.6) ? ROSE : BUTTERCUP; 
 
     s32 s = RAND(2, 6);
     s32 l = RAND(s - 1, s + 1);
@@ -146,7 +146,7 @@ void flowers(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) {
 
     for (s32 xx = (x - l); xx <= (x + l); xx++) {
         for (s32 zz = (z - h); zz <= (z + h); zz++) {
-            enum BlockId block = get(chunk, xx, y + 1, zz),
+            enum BlockId block = get(chunk, xx, y + 1, zz), 
                 under = get(chunk, xx, y, zz);
             if (block == AIR &&
                 under == GRASS &&
@@ -157,7 +157,7 @@ void flowers(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) {
     }
 }
 
-void orevein(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z, enum BlockId block) {
+void orevein(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z, enum BlockId block) { 
     s32 h = RAND(1, y - 4);
 
     if (h < 0 || h > y - 4) {
@@ -195,7 +195,7 @@ void orevein(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z, enum 
     }
 }
 
-void lavapool(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) {
+void lavapool(struct Chunk *chunk, FGet get, FSet set, s32 x, s32 y, s32 z) { 
     s32 h = y - 1;
 
     s32 s = RAND(1, 5);
@@ -242,7 +242,7 @@ static inline void decorate_top(struct Chunk *chunk, enum Biome biome, f32 t, f3
         flowers(chunk, _get, _set, x, h, z);
     }
 
-    if (biome != OCEAN && h <= (WATER_LEVEL + 3) && t < 0.1f && RANDCHANCE(0.001)) {
+    if (biome != OCEAN && h <= (WATER_LEVEL + 3) && t < 0.1f && RANDCHANCE(0.001)) { 
         lavapool(chunk, _get, _set, x, h, z);
     }
 }
@@ -269,7 +269,7 @@ void worldgen_generate(struct Chunk *chunk) {
             octave(8, 3),
             octave(8, 4)};
 
-        // Two separate combined noise functions, each combining two different
+        // Two separate combined noise functions, each combining two different 
         // octave noise functions
         struct Noise cs[] = {
             combined(&os[0], &os[1]),
