@@ -45,14 +45,14 @@ static GLint _compile(char *path, GLenum type) {
 
     // Check OpenGL logs if compilation failed
     if (compiled == 0) {
-        _log_and_fail(handle, "compiling", path, glGetShaderInfoLog, glGetShaderiv);
+        _log_and_fail(handle, "compiling", path, glGetShaderInfoLog, glGetShaderiv); 
     }
 
     free(text);
     return handle;
 }
 
-struct Shader shader_create(char *vs_path, char *fs_path, size_t n, struct VertexAttr attributes[]) {
+struct Shader shader_create(char *vs_path, char *fs_path, size_t n, struct VertexAttr attributes[]) { 
     struct Shader self;
     self.vs_handle = _compile(vs_path, GL_VERTEX_SHADER);
     self.fs_handle = _compile(fs_path, GL_FRAGMENT_SHADER);
@@ -64,19 +64,19 @@ struct Shader shader_create(char *vs_path, char *fs_path, size_t n, struct Verte
 
     // Bind vertex attributes
     for (size_t i = 0; i < n; i++) {
-        glBindAttribLocation(self.handle, attributes[i].index, attributes[i].name);
+        glBindAttribLocation(self.handle, attributes[i].index, attributes[i].name); 
     }
 
     glLinkProgram(self.handle);
 
     // Check link status
     GLint linked;
-    glGetProgramiv(self.handle, GL_LINK_STATUS, &linked);
+    glGetProgramiv(self.handle, GL_LINK_STATUS, &linked); 
 
     if (linked == 0) {
         char buf[512];
         snprintf(buf, 512, "[%s, %s]", vs_path, fs_path);
-        _log_and_fail(self.handle, "linking", buf, glGetProgramInfoLog, glGetProgramiv);
+        _log_and_fail(self.handle, "linking", buf, glGetProgramInfoLog, glGetProgramiv); 
     }
 
     return self;
@@ -93,15 +93,15 @@ void shader_bind(struct Shader self) {
 }
 
 void shader_uniform_mat4(struct Shader self, char *name, mat4s m) {
-    glUniformMatrix4fv(glGetUniformLocation(self.handle, name), 1, GL_FALSE, (const GLfloat *) &m.raw);
+    glUniformMatrix4fv(glGetUniformLocation(self.handle, name), 1, GL_FALSE, (const GLfloat *) &m.raw); 
 }
 
-void shader_uniform_view_proj(struct Shader self, struct ViewProj view_proj) {
+void shader_uniform_view_proj(struct Shader self, struct ViewProj view_proj) { 
     shader_uniform_mat4(self, "p", view_proj.proj);
-    shader_uniform_mat4(self, "v", view_proj.view);
+    shader_uniform_mat4(self, "v", view_proj.view); 
 }
 
-void shader_uniform_texture2D(struct Shader self, char *name, struct Texture texture, GLuint n) {
+void shader_uniform_texture2D(struct Shader self, char *name, struct Texture texture, GLuint n) { 
     glActiveTexture(GL_TEXTURE0 + n);
     texture_bind(texture);
     glUniform1i(glGetUniformLocation(self.handle, (const GLchar *) name), n);
