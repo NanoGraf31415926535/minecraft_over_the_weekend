@@ -1,6 +1,6 @@
 # Minecraft, but I made it in 3 days
 
-\*This started as a 48-hour challenge but has since been improved. Developed by Artem.
+\*This started as a 48-hour challenge but has since been improved. Developed by Artem and other contributors listed at the right corner
 ![image](https://github.com/user-attachments/assets/7d808885-1f31-4040-b1cd-cca231d18aba)
 
 #### Features:
