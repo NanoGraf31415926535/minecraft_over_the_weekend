@@ -1,10 +1,10 @@
-# Minecraft, but I made it in 48 hours*
+# Minecraft, but I made it in 3 days*
 
-\* I've actually updated it since - [see this commit for the 48 hour version](https://github.com/jdah/minecraft-weekend/tree/cb19738305804b5734faa7118c1c784f26ff9463).
-
-![screenshot](screenshots/1.png)
+\*This started as a 48-hour challenge but has since been improved. Developed by Artem.
+![image](https://github.com/user-attachments/assets/7d808885-1f31-4040-b1cd-cca231d18aba)
 
 #### Features:
+
 - Infinite, procedurally generated world
 - Infinite height/depth
 - Day/night cycle
@@ -21,7 +21,9 @@
 #### Building
 
 ##### Unix-like
-`$ git clone --recurse-submodules https://github.com/jdah/minecraft-weekend.git`\
+
+`$ git clone --recurse-submodules https://github.com/NanoGraf31415926535/minecraft_over_the_weekend.git `
+
 `$ make`
 
 The following static libraries under `lib/` must be built before the main project can be built:
@@ -32,12 +34,17 @@ The following static libraries under `lib/` must be built before the main projec
 - libnoise `lib/noise/libnoise.a`
 
 All of the above have their own Makefile under their respective subdirectory and can be built with `$ make libs`.
+
 If libraries are not found, ensure that submodules have been cloned.
 
 The game binary, once built with `$ make`, can be found in `./bin/`.
 
 *Be sure* to run with `$ ./bin/game` out of the root directory of the repository.
-If you are getting "cannot open file" errors (such as "cannot find ./res/shaders/*.vs"), this is the issue. 
+If you are getting "cannot open file" errors (such as "cannot find ./res/shaders/*.vs"), this is the issue.
+
+##### Windows
+
+You might have better luck building under WSL with an X environment to pass graphics through. Otherwise, good luck! 🤷‍♂️
 
 ##### Windows
 
