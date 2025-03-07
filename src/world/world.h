@@ -20,18 +20,18 @@ struct WorldUnloadedBlock {
     enum BlockId block;
 };
 
-// LONG_MIN is used for the unknown value so everything is greater than it
-// this means world_heightmap_update will always pick a new value over
+// LONG_MIN is used for the unknown value so everything is greater than it 
+// this means world_heightmap_update will always pick a new value over 
 // HEIGHTMAP_UNKNOWN
 #define HEIGHTMAP_UNKNOWN LONG_MIN
 struct Heightmap {
     // X-Z offset
     ivec2s offset;
 
-    // heightmap data (highest block in this Y column)
+    // heightmap data (highest block in this Y column) 
     s64 *data;
 
-    // heightmap worldgen data (see worldgen.c for usage)
+    // heightmap worldgen data (see worldgen.c for usage) 
     struct WorldgenData *worldgen_data;
 
     struct {
@@ -42,19 +42,19 @@ struct Heightmap {
 // computes the index of position (x, z) in a heightmap
 #define HEIGHTMAP_INDEX(p) ({ ivec2s q = (p); (q.x * CHUNK_SIZE.x) + q.y; })
 
-// gets heightmap data from heightmap h at the specified (x, z) position
+// gets heightmap data from heightmap h at the specified (x, z) position 
 #define HEIGHTMAP_GET(h, p) ((h)->data[HEIGHTMAP_INDEX(p)])
 
-// sets heightmap data for heightmap h at the specified (x, z) position
+// sets heightmap data for heightmap h at the specified (x, z) position 
 #define HEIGHTMAP_SET(h, p, y) ((h)->data[HEIGHTMAP_INDEX(p)] = y)
 
 struct World {
     // entity component system
     struct ECS ecs;
 
-    // the entity around which the world is viewed and the entity around which
+    // the entity around which the world is viewed and the entity around which 
     // the world is loaded
-    // both must have a position component; entity_view must have a camera component
+    // both must have a position component; entity_view must have a camera component 
     struct Entity entity_view, entity_load;
 
     // sky state
@@ -66,20 +66,20 @@ struct World {
     // random world seed
     u64 seed;
 
-    // Size of one dimension of World::chunks
+    // Size of one dimension of World::chunks 
     size_t chunks_size;
-
-    // Array of chunks in this world, size is always chunks_size ^ 3
-    // Chunk pointers canbe NULL if they are not yet loaded
+ 
+    // Array of chunks in this world, size is always chunks_size ^ 3 
+    // Chunk pointers canbe NULL if they are not yet loaded 
     struct Chunk **chunks;
 
-    // Bottom-left offset of chunks array and offset of the center chunk
+    // Bottom-left offset of chunks array and offset of the center chunk 
     ivec3s chunks_origin, center_offset;
 
-    // Array of heightmaps for each X-Z chunk column, sizeis always chunks_size ^ 2
+    // Array of heightmaps for each X-Z chunk column, sizeis always chunks_size ^ 2 
     struct Heightmap **heightmaps;
 
-    // Data which has been set in the world (i.e. by the world generator)
+    // Data which has been set in the world (i.e. by the world generator) 
     // but is not yet in a loaded chunk
     struct {
         struct WorldUnloadedBlock *list;
@@ -163,17 +163,17 @@ static inline struct Chunk *world_get_chunk(struct World *self, ivec3s offset) {
     }
 }
 
-// returns true if the specified chunk offset is loaded
+// returns true if the specified chunk offset is loaded 
 static inline bool world_contains_chunk(struct World *self, ivec3s offset) {
     return world_get_chunk(self, offset) != NULL;
 }
 
-// returns true if the specified position is in bounds (loaded or unloaded)
+// returns true if the specified position is in bounds (loaded or unloaded) 
 static inline bool world_in_bounds(struct World *self, ivec3s pos) {
     return world_chunk_in_bounds(self, world_pos_to_offset(pos));
 }
 
-// returns true if the world contains the specified position (it is loaded)
+// returns true if the world contains the specified position (it is loaded) 
 static inline bool world_contains(struct World *self, ivec3s pos) {
     return world_contains_chunk(self, world_pos_to_offset(pos));
 }
@@ -198,7 +198,7 @@ static inline bool world_contains(struct World *self, ivec3s pos) {
         }                                                                           \
     }
 
-WORLD_DECL_DATA(enum BlockId, block)
+WORLD_DECL_DATA(enum BlockId, block) 
 WORLD_DECL_DATA(Torchlight, torchlight)
 WORLD_DECL_DATA(Sunlight, sunlight)
 WORLD_DECL_DATA(Light, light)
