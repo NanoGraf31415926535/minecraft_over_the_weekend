@@ -12,19 +12,19 @@ enum SkyPlanes {
 
 // sky colors corresponding to [SkyState][SkyPlane]
 const vec4s SKY_COLORS[4][3] = {
-    { RGBAX2F(0x87CEEBFF), RGBAX2F(0x87CEEBFF), RGBAX2F(0x87CEEBFF) }, // DAY
-    { RGBAX2F(0x020206FF), RGBAX2F(0x010104FF), RGBAX2F(0x000000FF) }, // NIGHT
-    { RGBAX2F(0xFFCA7CFF), RGBAX2F(0xFFCA7CFF), RGBAX2F(0x000000FF) }, // SUNRISE
+    { RGBAX2F(0x87CEEBFF), RGBAX2F(0x87CEEBFF), RGBAX2F(0x87CEEBFF) }, // DAY 
+    { RGBAX2F(0x020206FF), RGBAX2F(0x010104FF), RGBAX2F(0x000000FF) }, // NIGHT 
+    { RGBAX2F(0xFFCA7CFF), RGBAX2F(0xFFCA7CFF), RGBAX2F(0x000000FF) }, // SUNRISE 
     { RGBAX2F(0xFFAB30FF), RGBAX2F(0xFFAB30FF), RGBAX2F(0x000000FF) }  // SUNSET
 };
 
-// sunlight colors corresponding to [DAY or NIGHT]
-const vec4s SUNLIGHT_COLORS[2] = {
+// sunlight colors corresponding to [DAY or NIGHT] 
+const vec4s SUNLIGHT_COLORS[2] = { 
     RGBAX2F(0xFFFFFFFF),
     RGBAX2F(0x000000FF)
 };
 
-// cloud colors corresponding to [DAY or NIGHT]
+// cloud colors corresponding to [DAY or NIGHT] 
 const vec4s CLOUD_COLORS[2] = {
     RGBAX2F(0xFFFFFFFF),
     RGBAX2F(0x040404FF)
@@ -41,7 +41,7 @@ void sky_init(struct Sky *self, struct World *world) {
 
     // place a unit quad of size 1.0 around (0, 0) in the VBO
     vbo_buffer(self->vbo, (f32[]) {
-        // positions
+        // positions 
         -0.5f, -0.5f, 0.0f,
         -0.5f, +0.5f, 0.0f,
         +0.5f, +0.5f, 0.0f,
@@ -68,8 +68,8 @@ enum SkyState get_sky_state(struct Sky *self) {
     const u64 day_ticks = (self->world->ticks % TOTAL_DAY_TICKS);
 
     if (day_ticks <= HALF_SUN_CHANGE_TICKS) {
-        return SUNRISE;
-    } else if (day_ticks <= (DAY_TICKS - HALF_SUN_CHANGE_TICKS)) {
+        return SUNRISE; 
+    } else if (day_ticks <= (DAY_TICKS - HALF_SUN_CHANGE_TICKS)) { 
         return DAY;
     } else if (day_ticks <= (DAY_TICKS + HALF_SUN_CHANGE_TICKS)) {
         return SUNSET;
@@ -95,13 +95,13 @@ f32 get_sky_state_progress(struct Sky *self) {
         case SUNSET:
             return (day_ticks - (DAY_TICKS - HALF_SUN_CHANGE_TICKS)) / SUN_CHANGE_TICKS;
         case NIGHT:
-            return (day_ticks - (DAY_TICKS + HALF_SUN_CHANGE_TICKS)) / NIGHT_TICKS;
+            return (day_ticks - (DAY_TICKS + HALF_SUN_CHANGE_TICKS)) / NIGHT_TICKS; 
     }
 }
 
-enum SkyState get_day_night(struct Sky *self) {
-    const u64 day_ticks = (self->world->ticks % TOTAL_DAY_TICKS);
-    return (day_ticks >= 0 && day_ticks <= DAY_TICKS) ? DAY : NIGHT;
+enum SkyState get_day_night(struct Sky *self) { 
+    const u64 day_ticks = (self->world->ticks % TOTAL_DAY_TICKS); 
+    return (day_ticks >= 0 && day_ticks <= DAY_TICKS) ? DAY : NIGHT; 
 }
 
 // returns a value in [0, 1] indicating the "progress" of the current day or night
@@ -127,7 +127,7 @@ static mat4s plane_model(vec3s translation, vec3s rotation, vec3s scale) {
 
 static mat4s celestial_model(struct Sky *self, enum CelestialBody body, vec3s center) {    
     const bool show = self->state_day_night == (body == SUN ? DAY : NIGHT);
-
+ 
     const f32
         base_start = -(PI + 0.5f),
         base_end = 0.5f;
@@ -148,16 +148,16 @@ static mat4s celestial_model(struct Sky *self, enum CelestialBody body, vec3s ce
 
     mat4s m = glms_mat4_identity();
     m = glms_translate(m, glms_vec3_add(center, (vec3s) {{ 0.0f, 4.0f, 0.0f }}));
-    m = glms_rotate(m, radians(-90.0f), (vec3s) {{ 0.0f, 1.0f, 0.0f }});
-    m = glms_rotate(m, angle, (vec3s) {{ 1.0f, 0.0f, 0.0f }});
-    m = glms_translate(m, (vec3s) {{ 0.0f, 0.0f, 10.0f }});
-    m = glms_scale(m, (vec3s) {{ 8.0f, 8.0f, 0 }});
+    m = glms_rotate(m, radians(-90.0f), (vec3s) {{ 0.0f, 1.0f, 0.0f }}); 
+    m = glms_rotate(m, angle, (vec3s) {{ 1.0f, 0.0f, 0.0f }}); 
+    m = glms_translate(m, (vec3s) {{ 0.0f, 0.0f, 10.0f }}); 
+    m = glms_scale(m, (vec3s) {{ 8.0f, 8.0f, 0 }}); 
 
     return m;
 }
 
-// renders a sky plane with the specified transformation parameters
-// assumes that the sky shader is already enabled and fog uniforms have been set
+// renders a sky plane with the specified transformation parameters 
+// assumes that the sky shader is already enabled and fog uniforms have been set 
 static void plane_render(struct Sky *self, struct Texture *tex, vec4s color, mat4s m) {
     shader_uniform_mat4(state.renderer.shaders[SHADER_SKY], "m", m);
     shader_uniform_vec4(state.renderer.shaders[SHADER_SKY], "color", color);
