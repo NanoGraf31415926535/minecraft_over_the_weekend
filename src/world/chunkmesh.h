@@ -5,94 +5,111 @@
 #include "../gfx/vao.h"
 #include "../gfx/vbo.h"
 #include "../util/util.h"
+#include <stdbool.h> // For bool
 
-// forward declarations
+// Forward declaration
 struct Chunk;
 
-enum ChunkMeshPart {
+/**
+ * @brief Represents different parts of a chunk mesh.
+ */
+typedef enum {
     BASE,
     TRANSPARENT
-};
+} ChunkMeshPart;
 
-#define BUFFER_TYPE_LAST FACES
-enum BufferType {
+/**
+ * @brief Represents different buffer types used in a chunk mesh.
+ */
+typedef enum {
     DATA = 0,
     INDICES,
-    FACES
-};
+    FACES,
+    BUFFER_TYPE_LAST = FACES // Last buffer type
+} BufferType;
 
+/**
+ * @brief Represents a face in the chunk mesh.
+ */
 struct Face {
-    // index of face indices in 'indices' ChunkMeshBuffer
-    size_t indices_base;
-
-    // position of face (used for sorting)
-    vec3s position;
-
-    // precomputed distance (used for sorting)
-    f32 distance;
+    size_t indices_base; ///< Index of face indices in 'indices' ChunkMeshBuffer.
+    vec3s position;      ///< Position of the face (used for sorting).
+    f32 distance;        ///< Precomputed distance (used for sorting).
 };
 
+/**
+ * @brief Represents a buffer used in the chunk mesh.
+ */
 struct ChunkMeshBuffer {
-    enum BufferType type;
-
-    // data store for this buffer, NULL if not currently allocated
-    void *data;
-
-    // capacity (in bytes) of data
-    size_t capacity;
-
-    // current index (in bytes) into data, used when building mesh
-    size_t index;
-
-    // final count (in bytes) in data
-    size_t count;
-
-    // current count (in elements) of data
-    size_t elements;
+    BufferType type;    ///< Type of the buffer.
+    void *data;         ///< Data store for this buffer, NULL if not allocated.
+    size_t capacity;    ///< Capacity (in bytes) of data.
+    size_t index;       ///< Current index (in bytes) into data.
+    size_t count;       ///< Final count (in bytes) in data.
+    size_t elements;    ///< Current count (in elements) of data.
 };
 
-// Chunk mesh instance, should only be accessed on the main thread
+/**
+ * @brief Represents a chunk mesh instance.
+ */
 struct ChunkMesh {
-    struct Chunk *chunk;
+    struct Chunk *chunk; ///< Pointer to the chunk this mesh belongs to.
 
-    // data, indices, faces buffers
-    struct ChunkMeshBuffer buffers[BUFFER_TYPE_LAST + 1];
+    struct ChunkMeshBuffer buffers[BUFFER_TYPE_LAST + 1]; ///< Data, indices, faces buffers.
 
-    // total number of vertices in this mesh
-    size_t vertex_count;
+    size_t vertex_count; ///< Total number of vertices in this mesh.
 
     struct {
         struct {
-            size_t offset, count;
+            size_t offset; ///< Offset of indices.
+            size_t count;  ///< Count of indices.
         } base, transparent;
-    } indices;
+    } indices; ///< Indices offsets and counts.
 
     struct {
-        // if true, this mesh needs to be finalized (uploaded)
-        bool finalize : 1;
+        bool finalize : 1;   ///< If true, mesh needs to be finalized (uploaded).
+        bool dirty : 1;      ///< If true, mesh will be rebuilt next render.
+        bool depth_sort : 1; ///< If true, mesh will be depth sorted next render.
+        bool destroy : 1;    ///< If true, mesh will be destroyed when data is accessible.
+        bool persist : 1;    ///< If true, index and face buffers are kept in memory.
+    } flags; ///< Mesh flags.
 
-        // if true, this mesh will be rebuilt next time it is rendered
-        bool dirty : 1;
-
-        // if true, this mesh will be depth sorted next time it is rendered
-        bool depth_sort : 1;
-
-        // if true, this mesh will be destroyed when its data is next accessible
-        bool destroy : 1;
-
-        // if true, index and face buffers are kept in memory after building
-        bool persist : 1;
-    } flags;
-
-    // buffer objects
-    struct VAO vao;
-    struct VBO vbo, ibo;
+    struct VAO vao; ///< Vertex array object.
+    struct VBO vbo; ///< Vertex buffer object.
+    struct VBO ibo; ///< Index buffer object.
 };
 
+/**
+ * @brief Creates a new chunk mesh.
+ * @param chunk Pointer to the chunk this mesh belongs to.
+ * @return Pointer to the created ChunkMesh, or NULL on failure.
+ */
 struct ChunkMesh *chunkmesh_create(struct Chunk *chunk);
+
+/**
+ * @brief Destroys a chunk mesh.
+ * @param self Pointer to the ChunkMesh to destroy.
+ */
 void chunkmesh_destroy(struct ChunkMesh *self);
+
+/**
+ * @brief Prepares a chunk mesh for rendering.
+ * @param self Pointer to the ChunkMesh to prepare.
+ */
 void chunkmesh_prepare_render(struct ChunkMesh *self);
-void chunkmesh_render(struct ChunkMesh *self, enum ChunkMeshPart part);
+
+/**
+ * @brief Renders a chunk mesh part.
+ * @param self Pointer to the ChunkMesh to render.
+ * @param part The part of the mesh to render (BASE or TRANSPARENT).
+ */
+void chunkmesh_render(struct ChunkMesh *self, ChunkMeshPart part);
+
+/**
+ * @brief Sets the persist flag for a chunk mesh.
+ * @param self Pointer to the ChunkMesh.
+ * @param persist True to persist buffers, false otherwise.
+ */
 void chunkmesh_set_persist(struct ChunkMesh *self, bool persist);
 
-#endif
+#endif // CHUNKMESH_H
