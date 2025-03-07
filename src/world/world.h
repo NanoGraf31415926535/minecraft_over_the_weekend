@@ -28,10 +28,10 @@ struct Heightmap {
     // X-Z offset
     ivec2s offset;
 
-    // heightmap data (highest block in this Y column) 
+    // heightmap data (highest block in this Y column)  
     s64 *data;
 
-    // heightmap worldgen data (see worldgen.c for usage) 
+    // heightmap worldgen data (see worldgen.c for usage)  
     struct WorldgenData *worldgen_data;
 
     struct {
@@ -42,19 +42,19 @@ struct Heightmap {
 // computes the index of position (x, z) in a heightmap
 #define HEIGHTMAP_INDEX(p) ({ ivec2s q = (p); (q.x * CHUNK_SIZE.x) + q.y; })
 
-// gets heightmap data from heightmap h at the specified (x, z) position 
+// gets heightmap data from heightmap h at the specified (x, z) position  
 #define HEIGHTMAP_GET(h, p) ((h)->data[HEIGHTMAP_INDEX(p)])
 
-// sets heightmap data for heightmap h at the specified (x, z) position 
+// sets heightmap data for heightmap h at the specified (x, z) position  
 #define HEIGHTMAP_SET(h, p, y) ((h)->data[HEIGHTMAP_INDEX(p)] = y)
 
 struct World {
     // entity component system
     struct ECS ecs;
 
-    // the entity around which the world is viewed and the entity around which 
+    // the entity around which the world is viewed and the entity around which  
     // the world is loaded
-    // both must have a position component; entity_view must have a camera component 
+    // both must have a position component; entity_view must have a camera component  
     struct Entity entity_view, entity_load;
 
     // sky state
@@ -69,14 +69,14 @@ struct World {
     // Size of one dimension of World::chunks 
     size_t chunks_size;
  
-    // Array of chunks in this world, size is always chunks_size ^ 3 
+    // Array of chunks in this world, size is always chunks_size ^ 3  
     // Chunk pointers canbe NULL if they are not yet loaded 
     struct Chunk **chunks;
 
-    // Bottom-left offset of chunks array and offset of the center chunk 
+    // Bottom-left offset of chunks array and offset of the center chunk  
     ivec3s chunks_origin, center_offset;
 
-    // Array of heightmaps for each X-Z chunk column, sizeis always chunks_size ^ 2 
+    // Array of heightmaps for each X-Z chunk column, sizeis always chunks_size ^ 2  
     struct Heightmap **heightmaps;
 
     // Data which has been set in the world (i.e. by the world generator) 
@@ -126,9 +126,9 @@ static inline ivec3s world_pos_to_block(vec3s pos) {
                      (s32)floorf(pos.z)}};
 }
 
-// world position -> chunk position
+// world position -> chunk position 
 static inline ivec3s world_pos_to_chunk_pos(ivec3s pos) {
-    // ((pos % size) + size) % size
+    // ((pos % size) + size) % size 
     return glms_ivec3_mod(glms_ivec3_add(glms_ivec3_mod(pos, CHUNK_SIZE), CHUNK_SIZE), CHUNK_SIZE);
 }
 
@@ -138,13 +138,13 @@ static inline bool world_chunk_in_bounds(struct World *self, ivec3s offset) {
            p.x < (s32)self->chunks_size && p.y < (s32)self->chunks_size && p.z < (s32)self->chunks_size;
 }
 
-// chunk offset -> world array index
+// chunk offset -> world array index 
 static inline size_t world_chunk_index(struct World *self, ivec3s offset) {
     ivec3s p = glms_ivec3_sub(offset, self->chunks_origin);
     return (p.x * self->chunks_size * self->chunks_size) + (p.z * self->chunks_size) + p.y;
 }
 
-// world array index -> chunk offset
+// world array index -> chunk offset 
 static inline ivec3s world_chunk_offset(struct World *self, size_t i) {
     return glms_ivec3_add(
         self->chunks_origin,
@@ -153,7 +153,7 @@ static inline ivec3s world_chunk_offset(struct World *self, size_t i) {
                   (i / self->chunks_size) % self->chunks_size}});
 }
 
-// returns the chunk at the specified offset, NULL if it is not loaded or is
+// returns the chunk at the specified offset, NULL if it is not loaded or is 
 // out of bounds
 static inline struct Chunk *world_get_chunk(struct World *self, ivec3s offset) {
     if (!world_chunk_in_bounds(self, offset)) {
